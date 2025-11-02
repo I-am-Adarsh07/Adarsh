@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | All In One Store</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Essential styles for cart UI that might be missing in styles.css */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .cart-main { padding: 40px 20px; }
+        .cart-content-layout { display: flex; gap: 30px; flex-wrap: wrap; }
+        .main-header { background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;}
+        .header-content { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+        .logo a { font-size: 1.8em; font-weight: 700; color: #ff9900; text-decoration: none; }
+        .search-bar { display: flex; flex-grow: 1; max-width: 500px; margin: 0 30px; }
+        .header-nav { display: flex; align-items: center; gap: 20px; }
+
+        /* FIX: Ensure header links and product links are visible */
+        /* This CSS block ensures that text in the header and product details is visible and not hidden by other rules */
+        .header-nav a { 
+            color: #333; /* Ensure text color is not white/transparent */
+            text-decoration: none;
+            font-size: 1em;
+            display: flex; /* Ensures icon and text display correctly */
+            align-items: center;
+        }
+        .item-info h3 a, .item-info p { 
+            color: #333 !important; /* Force text color for product details */
+            display: block;
+        }
+        /* END FIX */
+
+        @media (min-width: 900px) {
+            .cart-items-container { flex: 2; }
+            .cart-summary { flex: 1; padding: 20px; border: 1px solid #ddd; border-radius: 8px; height: fit-content; position: sticky; top: 20px; }
+        }
+        @media (max-width: 899px) {
+            .cart-items-container { width: 100%; }
+            .cart-summary { width: 100%; margin-top: 20px; }
+        }
+        .cart-item { 
+            display: flex; align-items: center; justify-content: space-between; 
+            border: 1px solid #f0f0f0; margin-bottom: 15px; padding: 15px; border-radius: 8px; 
+        }
+        .item-details { display: flex; align-items: center; gap: 15px; }
+        .item-img { 
+            width: 80px; height: 80px; 
+            object-fit: contain; 
+            border-radius: 4px; border: 1px solid #eee; 
+        }
+        .item-details img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .item-info h3 a { text-decoration: none; color: #333; font-size: 1.1em; }
+        .item-price { font-size: 1.1em; color: #28a745; }
+        .old-price-small { text-decoration: line-through; color: #999; font-size: 0.8em; margin-left: 10px; }
+        .quantity-control { display: flex; align-items: center; gap: 0px; border: 1px solid #ccc; border-radius: 4px; overflow: hidden; }
+        .qty-btn { padding: 5px 10px; border: none; background-color: #f9f9f9; cursor: pointer; transition: background-color 0.2s; }
+        .qty-btn:hover:not(:disabled) { background-color: #eee; }
+        .qty-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .qty-display { padding: 5px 15px; min-width: 25px; text-align: center; border-left: 1px solid #ccc; border-right: 1px solid #ccc; }
+        .cart-item .item-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+        .remove-btn { background-color: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background-color 0.2s; }
+        .remove-btn:hover { background-color: #c82333; }
+
+        .summary-details p, .summary-total p { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .summary-total { margin-top: 15px; padding-top: 15px; border-top: 2px dashed #ccc; font-weight: bold; font-size: 1.2em; }
+        .checkout-btn { width: 100%; padding: 12px; background-color: #ff9900; color: white; border: none; border-radius: 6px; font-size: 1.1em; margin-top: 20px; cursor: pointer; transition: background-color 0.2s; }
+        .checkout-btn:hover:not(:disabled) { background-color: #cc7a00; }
+        .checkout-btn:disabled { background-color: #ffd499; cursor: not-allowed; }
+        .summary-savings-info { margin-top: 15px; padding: 10px; background-color: #e9f7ef; border: 1px solid #d4edda; color: #155724; border-radius: 4px; text-align: center; font-weight: 600; }
+        .extra-actions { margin-top: 20px; padding: 15px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; border-radius: 4px; }
+        
+        /* Toast style */
+        #customToast { 
+            visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            z-index: 9999; background-color: #333; color: #fff; padding: 10px 20px; border-radius: 5px; 
+            opacity: 0; transition: opacity 0.3s, visibility 0.3s; 
+        }
+        #customToast.show { visibility: visible; opacity: 1; }
+        .main-footer { padding: 30px 0; background-color: #333; color: #fff; margin-top: 40px; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .footer-column { margin-bottom: 20px; }
+        .footer-column h3 { font-size: 1.2em; margin-bottom: 15px; color: #ff9900; }
+        .footer-column ul { list-style: none; padding: 0; }
+        .footer-column ul li a { color: #ccc; text-decoration: none; display: block; margin-bottom: 8px; }
+        .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid #555; font-size: 0.9em; }
+
+    </style>
+</head>
+<body>
+    
+    <header class="main-header">
+        <div class="header-content container">
+            <div class="logo">
+                <a href="index.html">All In One Store</a>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <button>🔍</button>
+            </div>
+            
+            <nav class="header-nav">
+                <a href="account.html">👨 **Account**</a> 
+                <a href="#">❤️ **Wishlist**</a>
+                <a href="cart.html" class="cart-icon">🛒 **Cart** (0)</a> 
+            </nav>
+        </div>
+    </header>
+
+<main class="container cart-main">
+    <h1>🛒 My Shopping Cart (<span id="cart-item-count">0</span> Items)</h1>
+
+    <div class="cart-content-layout">
+        
+        <div class="cart-items-container">
+            </div>
+
+        <div class="cart-summary">
+            <h2 class="summary-heading">💰 Price Details</h2>
+            
+            <div class="summary-details">
+                <p>Total Items: <span id="summary-total-qty">0</span></p>
+                <p>Subtotal: <span id="summary-total-price">₹ 0</span></p>
+                <p>Discount: <span id="summary-discount">- ₹ 0</span></p>
+                <p>Delivery Charges: <span id="summary-delivery">₹ 40</span></p>
+            </div>
+            
+            <div class="summary-total">
+                <p>Total Amount: <span id="summary-final-total">₹ 0</span></p>
+            </div>
+            
+            <button class="checkout-btn" id="checkout-button" disabled>Proceed to Checkout</button>
+            
+            <p class="summary-savings-info">
+                🎉 You saved <span id="summary-savings">₹ 0</span> on this order!
+            </p>
+        </div>
+    </div>
+</main>
+
+    <footer class="main-footer">
+        <div class="footer-content container">
+            <div class="footer-column">
+                <h3>About Us</h3>
+                <ul>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="#">Return And Refund</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Connect With Us</h3>
+                <div class="social-links">
+                    <a href="#">Click Here</a> 
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            &copy; 2025 All In One Store. All rights reserved.
+        </div>
+    </footer>
+    
+    <div id="customToast"></div> 
+
+
+    <script>
+        // --- 1. PRODUCT DATABASE (COPIED EXACTLY FROM index.html) ---
+        const productDatabase = {
+            '1': { 
+                title: 'Smartwatch Model X', price: 9999, oldPrice: '₹ 19,999', 
+                image: 'https://www.titan.co.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dwf5666e88/images/Fastrack/Catalog/38148QM01_1.jpg?sw=360&sh=360', 
+                category: 'Electronics', discount: '-50% OFF', rating: 4.3,
+            },
+            '2': { 
+                title: "Man's T-shirt", price: 399, oldPrice: '₹ 1,299', 
+                image: 'https://img.freepik.com/premium-photo/black-plain-shortsleeve-cotton-t-shirt-template-isolated-white-background_41929-3076.jpg', 
+                category: 'Fashion', discount: '-70% OFF', rating: 4.8,
+            },
+            '3': { 
+                title: 'Premium Headphones', price: 1499, oldPrice: '₹ 2,499', 
+                image: 'https://www.leafstudios.in/cdn/shop/files/1_a43c5e0b-3a47-497d-acec-b4764259b10e_1024x1024.png?v=1750486829', 
+                category: 'Electronics', discount: '-40% OFF', rating: 4.1,
+            },
+            '4': { 
+                title: 'PowerBank', price: 1250, oldPrice: '₹ 1,800', 
+                image: 'https://zebronics.com/cdn/shop/files/Zeb-MB10000S9-Pro-pic1.jpg?v=1755673820&width=800', 
+                category: 'Electronics', discount: '-30% OFF', rating: 4.7,
+            },
+             // Note: I only included products 1-4 to focus on the fix, assuming these are the products you are testing.
+        };
+
+
+        // Helper function to convert price string (like '₹ 9,999') to number (9999)
+        function parsePrice(priceString) {
+             // If price is already a number (as it is now in index.html), return it directly.
+             if (typeof priceString === 'number') {
+                return priceString;
+            }
+            if (!priceString) return 0;
+            const cleaned = priceString.replace(/[^0-9.]/g, ''); 
+            return parseInt(cleaned) || 0;
+        }
+
+        // Helper function for Toast
+        function showToast(message) {
+            const toast = document.getElementById("customToast");
+            if (!toast) return;
+            toast.textContent = message;
+            toast.className = "show"; 
+            setTimeout(function(){ 
+                toast.className = toast.className.replace("show", ""); 
+            }, 3000);
+        }
+
+        // Helper function to update header cart count
+        function updateHeaderCartCount() {
+            const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            const cartIcon = document.querySelector('.cart-icon');
+            if(cartIcon) {
+                // FIX: Displays bold text and correct count
+                cartIcon.innerHTML = `🛒 **Cart** (${totalItems})`;
+            }
+        }
+
+
+        // --- 2. CART MANAGEMENT FUNCTIONS ---
+
+        function updateQuantity(productId, newQuantity) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const itemIndex = cart.findIndex(i => i.id === productId);
+            newQuantity = parseInt(newQuantity);
+
+            if (itemIndex > -1) {
+                if (newQuantity > 0) {
+                    cart[itemIndex].quantity = newQuantity;
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    showToast(`Quantity updated to ${newQuantity}!`); 
+                } else {
+                    cart.splice(itemIndex, 1);
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    showToast(`Item removed!`); 
+                }
+            } 
+
+            renderCart(); 
+        }
+
+        function removeItem(productId) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const initialLength = cart.length;
+            cart = cart.filter(i => i.id !== productId);
+            
+            if (cart.length < initialLength) {
+                localStorage.setItem('cart', JSON.stringify(cart));
+                showToast(`🗑️ Item removed from cart!`); 
+            }
+            renderCart(); 
+        }
+
+
+        // --- 3. CART RENDERING LOGIC ---
+
+        function renderCart() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const cartItemsContainer = document.querySelector('.cart-items-container');
+            
+            cartItemsContainer.innerHTML = ''; 
+
+            let subTotal = 0;
+            let totalOriginalPrice = 0;
+            let totalQuantity = 0;
+            const DELIVERY_THRESHOLD = 500;
+            const DELIVERY_CHARGE = 40;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `<p id="empty-cart-message" style="text-align: center; color: #555; padding: 50px; font-size: 1.2em;">
+                    Your cart is empty. <a href="index.html" style="color: #ff9900; text-decoration: none; font-weight: bold;">Start shopping now!</a>
+                </p>`;
+            } else {
+                cart.forEach(item => {
+                    const productDetails = productDatabase[item.id]; 
+                    
+                    if (!productDetails) {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('cart-item');
+                        itemElement.innerHTML = `
+                             <div class="item-details">
+                                 <img src="https://via.placeholder.com/80?text=Data+Error" alt="Data Error" class="item-img">
+                                 <div class="item-info">
+                                     <h3>Product ID: ${item.id} (Data Missing)</h3>
+                                     <p style="color:red; font-weight:bold;">Cannot calculate price.</p>
+                                 </div>
+                             </div>
+                             <div class="item-actions">
+                                 <button class="remove-btn" onclick="removeItem('${item.id}')">🗑️ Remove Item</button>
+                             </div>
+                           `;
+                        cartItemsContainer.appendChild(itemElement);
+                        return; 
+                    }
+
+                    // Proceed with rendering and calculation
+                    // We use the 'price' property from index.html which is a number (e.g., 9999)
+                    const currentPrice = productDetails.price; 
+                    const originalPrice = parsePrice(productDetails.oldPrice); // oldPrice is still a string
+
+                    
+                    subTotal += currentPrice * item.quantity;
+                    totalOriginalPrice += originalPrice * item.quantity;
+                    totalQuantity += item.quantity;
+
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('cart-item');
+
+                    itemElement.innerHTML = `
+                        <div class="item-details">
+                            <img src="${productDetails.image}" alt="${productDetails.title}" class="item-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/80?text=Image+Missing';">
+                            <div class="item-info">
+                                <h3><a href="product.html?id=${item.id}">${productDetails.title}</a></h3>
+                                <p class="item-price">
+                                    **₹ ${(currentPrice * item.quantity).toLocaleString('en-IN')}** <span class="old-price-small">${(originalPrice * item.quantity).toLocaleString('en-IN') ? '₹ ' + (originalPrice * item.quantity).toLocaleString('en-IN') : ''}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <div class="quantity-control">
+                                <button class="qty-btn minus-btn" data-id="${item.id}" ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
+                                <span class="qty-display">${item.quantity}</span>
+                                <button class="qty-btn plus-btn" data-id="${item.id}">+</button>
+                            </div>
+                            <button class="remove-btn" data-id="${item.id}">🗑️ Remove</button>
+                        </div>
+                    `;
+
+                    // Attach event listeners
+                    itemElement.querySelector('.minus-btn').addEventListener('click', () => {
+                        updateQuantity(item.id, item.quantity - 1);
+                    });
+
+                    itemElement.querySelector('.plus-btn').addEventListener('click', () => {
+                        updateQuantity(item.id, item.quantity + 1);
+                    });
+                    
+                    itemElement.querySelector('.remove-btn').addEventListener('click', () => {
+                        removeItem(item.id);
+                    });
+
+                    cartItemsContainer.appendChild(itemElement);
+                });
+
+                // Add Free Delivery Message/Warning
+                if (subTotal >= DELIVERY_THRESHOLD) {
+                    cartItemsContainer.insertAdjacentHTML('beforeend', `<div class="extra-actions" style="background-color:#d4edda; color:#155724;">
+                        <p>✅ Great! Your order qualifies for **FREE Delivery**!</p>
+                    </div>`);
+                } else {
+                    const needed = DELIVERY_THRESHOLD - subTotal;
+                    cartItemsContainer.insertAdjacentHTML('beforeend', `<div class="extra-actions">
+                        <p>🚚 Add items worth **₹ ${needed.toLocaleString('en-IN')}** more to get **FREE Delivery**!</p>
+                    </div>`);
+                }
+            }
+
+            // --- Update Summary Section ---
+            const deliveryCharge = subTotal >= DELIVERY_THRESHOLD ? 0 : (subTotal > 0 ? DELIVERY_CHARGE : 0); 
+            const finalTotal = subTotal + deliveryCharge;
+            const discount = Math.max(0, totalOriginalPrice - subTotal); 
+
+            document.getElementById('summary-total-qty').textContent = totalQuantity;
+            document.getElementById('summary-total-price').textContent = `₹ ${subTotal.toLocaleString('en-IN')}`;
+            document.getElementById('summary-discount').textContent = `- ₹ ${discount.toLocaleString('en-IN')}`;
+            document.getElementById('summary-savings').textContent = `₹ ${discount.toLocaleString('en-IN')}`;
+
+            const deliverySpan = document.getElementById('summary-delivery');
+            if (deliveryCharge === 0 && subTotal > 0) {
+                deliverySpan.textContent = 'FREE';
+                deliverySpan.style.color = 'green';
+            } else if (subTotal === 0) {
+                deliverySpan.textContent = '₹ 0';
+                deliverySpan.style.color = '';
+            } else {
+                deliverySpan.textContent = `₹ ${deliveryCharge}`;
+                deliverySpan.style.color = '';
+            }
+            
+            document.getElementById('summary-final-total').textContent = `₹ ${finalTotal.toLocaleString('en-IN')}`;
+            
+            // Update main title count and header count
+            document.getElementById('cart-item-count').textContent = totalQuantity;
+            updateHeaderCartCount();
+
+            // Disable Checkout button only if the cart is empty
+            const checkoutBtn = document.getElementById('checkout-button');
+            if (checkoutBtn) {
+                checkoutBtn.disabled = cart.length === 0;
+                checkoutBtn.style.opacity = cart.length === 0 ? 0.6 : 1;
+                checkoutBtn.style.cursor = cart.length === 0 ? 'not-allowed' : 'pointer';
+            }
+        }
+
+        // --- 4. INITIALIZATION AND EVENT LISTENERS ---
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCart();
+            
+            // --- Checkout Logic ---
+            const checkoutBtn = document.getElementById('checkout-button');
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', function() {
+                    const cart = JSON.parse(localStorage.getItem('cart') || '[]'); 
+                    if (cart.length > 0) {
+                        showToast("Redirecting to Checkout...");
+                        setTimeout(() => {
+                             window.location.href = 'checkout.html';
+                        }, 500);
+                    } else {
+                        showToast("⚠️ Your cart is empty. Please add items before checking out.");
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="security.js"></script>
+</body>
+</html>

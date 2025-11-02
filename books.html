@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books | All In One Store</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.html">All In One Store</a>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <button>🔍</button>
+            </div>
+            
+            <nav class="header-nav">
+                <a href="account.html">👨 Account</a> 
+                <a href="#">❤️ Wishlist</a>
+                <a href="cart.html" class="cart-icon">🛒 Cart (0)</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <h1 class="page-title">📚 Books and Novels</h1> 
+        <p class="category-description">Dive into the world of great stories and knowledge. Check out our collection of bestsellers!</p>
+
+        <div class="product-grid" id="product-list">
+        </div>
+
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content container">
+            <div class="footer-column"><h3>About Us</h3><ul><li><a href="123-456">Contact</a></li></ul></div>
+            <div class="footer-column"><h3>Customer Service</h3><ul><li><a href="#">Return And Refund</a></li><li><a href="#">FAQs</a></li></ul></div>
+            <div class="footer-column"><h3>Policy</h3><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Use</a></li></ul></div>
+            <div class="footer-column"><h3>Connect With Us</h3><div class="social-links"><a href="https://gym-pro-8zz6.onrender.com">Click Here</a></div></div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2024 Mera Bazaar. All Rights Reserved.
+        </div>
+    </footer>
+    
+    <script src="product.js"></script> 
+    <script src="script.js"></script> 
+    
+    <script>
+        // Ensure the productDatabase is loaded and available
+        if (typeof productDatabase !== 'undefined') {
+            
+            // Filter items to show only products in the "books" category
+            const booksProducts = Object.values(productDatabase).filter(product => 
+                product.category === 'books'
+            );
+            
+            const productGrid = document.getElementById('product-list');
+            
+            // Note: Assuming a renderProducts() function exists in script.js, 
+            // but providing manual rendering for robustness.
+            
+            // Manual Rendering Loop
+            booksProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                
+                // Build the product card HTML structure
+                productCard.innerHTML = `
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.title}">
+                        <span class="discount-badge">${product.discount}</span>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">${product.title}</h3>
+                        <div class="product-price">
+                            <span class="new-price">${product.priceDisplay}</span>
+                            <span class="old-price">${product.oldPrice}</span>
+                        </div>
+                        <button class="add-to-cart-btn">Add To Cart</button>
+                    </div>
+                `;
+                productGrid.appendChild(productCard);
+            });
+            
+            // Show a message if no Book items are found
+            if (booksProducts.length === 0) {
+                productGrid.innerHTML = '<p>No books found in this category right now.</p>';
+            }
+        }
+    </script>
+    <script src="security.js"></script>
+</body>
+</html>

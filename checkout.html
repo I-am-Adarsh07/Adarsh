@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout & Payment | All In One Store</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="product.js"></script> 
+    <script src="js/interactivity.js"></script> 
+</head>
+<body>
+    
+    <header class="main-header">
+        </header>
+
+    <main class="container checkout-main">
+        <h1>💳 Secure Checkout</h1>
+
+        <div class="checkout-layout">
+            
+            <div class="checkout-form-section">
+                
+                <div id="address-section"> 
+                    <h2>1. Delivery Address</h2>
+                    <form id="shipping-form" class="checkout-form">
+                        <input type="text" placeholder="Full Name" required>
+                        <input type="text" placeholder="Mobile Number" required>
+                        <input type="text" placeholder="Address Line 1 (House No., Street)" required>
+                        <input type="text" placeholder="Pincode" required>
+                        <button type="submit" class="save-address-btn">Save Address & Continue</button>
+                    </form>
+                </div>
+                
+                <div id="payment-section" style="display: none;"> 
+                    <h2>2. Payment Method</h2>
+                    <div class="payment-options">
+                        
+                        <label class="payment-option-card">
+                            <input type="radio" name="payment-method" value="qr" id="payment-qr">
+                            <span>Scan UPI QR Code / UPI ID</span>
+                            <p>Pay using any UPI app like Paytm, GPay, or PhonePe.</p>
+                        </label>
+
+                        <div id="qr-display-area" style="display: none; text-align: center; padding: 15px; background-color: #f7f7f7; border-radius: 8px; margin-top: 10px;">
+                            <h3>Scan to Pay</h3>
+                            <img id="qr-code-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Scan UPI QR Code" style="width: 150px; height: 150px; border: 1px solid #ddd; margin: 10px 0;">
+                            <p style="font-size: 0.9em; color: #555;">Or use UPI ID: <strong id="upi-display-id"></strong></p>
+                            <p style="color: #FF5722; font-weight: 600;">Amount: ₹ <span id="qr-amount-display">0</span></p>
+                        </div>
+                        
+                        <label class="payment-option-card">
+                            <input type="radio" name="payment-method" value="cod" checked>
+                            <span>Cash On Delivery (COD)</span>
+                            <p>Pay with cash when you receive the order.</p>
+                        </label>
+                        
+                    </div>
+                    
+                    <button id="place-order-btn" class="checkout-btn" disabled style="opacity: 0.7;">
+                        Place Order (₹ <span id="final-total-display">0</span>)
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="cart-summary checkout-summary">
+                <h2 class="summary-heading">📦 Order Summary (<span id="summary-total-qty">0</span> Items)</h2>
+                
+                <div id="checkout-items-list">
+                    </div>
+
+                <div class="summary-details">
+                    <p>Subtotal: <span id="summary-total-price">₹ 0</span></p>
+                    <p>Discount: <span id="summary-discount">- ₹ 0</span></p>
+                    <p>Delivery Charges: <span id="summary-delivery">₹ 40</span></p>
+                </div>
+                
+                <div class="summary-total">
+                    <p>Total Payable: <span id="summary-final-total">₹ 0</span></p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        </footer>
+    
+    <div id="customToast"></div> 
+
+    <script>
+        // ====================================
+        // CONFIGURATION
+        // ====================================
+        const UPI_ID = 'adarsh153@ybl'; 
+        const MERCHANT_NAME = 'AllInOneStore'; 
+        const DELIVERY_THRESHOLD = 500;
+        const DELIVERY_CHARGE = 40;
+        let finalOrderTotal = 0; 
+        
+        // Helper function to parse price string 
+        function parsePrice(priceStr) {
+            if (!priceStr) return 0;
+            const cleanedStr = priceStr.replace(/[^0-9.]/g, '');
+            return parseInt(cleanedStr) || 0;
+        }
+
+        // ----------------------------------------------------
+        // Dynamic QR Code Generation Logic
+        // ----------------------------------------------------
+        function updateQrCode() {
+            const qrAmountDisplay = document.getElementById('qr-amount-display');
+            const qrCodeImg = document.getElementById('qr-code-img'); 
+            const upiIdDisplay = document.getElementById('upi-display-id');
+            
+            if (finalOrderTotal <= 0) return;
+
+            const formattedAmount = finalOrderTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            qrAmountDisplay.textContent = formattedAmount;
+            if (upiIdDisplay) upiIdDisplay.textContent = UPI_ID;
+            
+            const encodedAmount = finalOrderTotal.toFixed(2);
+            
+            const upiUrl = `upi://pay?pa=${UPI_ID}&pn=${MERCHANT_NAME}&am=${encodedAmount}&cu=INR`;
+            const qrCodeUrl = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(upiUrl)}`;
+
+            if (qrCodeImg) {
+                qrCodeImg.src = qrCodeUrl;
+            }
+        }
+
+
+        // ----------------------------------------------------
+        // Main function to Render the Order Summary
+        // ----------------------------------------------------
+        function renderCheckoutSummary() {
+            // FIX: Prioritize 'buyNowItem' first, otherwise default to 'cartItems'
+            let cartItems = JSON.parse(localStorage.getItem('buyNowItem')); 
+            
+            if (!cartItems || cartItems.length === 0) {
+                 cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            }
+            
+            const itemsList = document.getElementById('checkout-items-list');
+            
+            if (cartItems.length === 0) {
+                showToast("Your cart is empty. Redirecting to home.");
+                setTimeout(() => {
+                    window.location.href = 'index.html'; 
+                }, 1500);
+                return;
+            }
+
+            let subTotal = 0;
+            let totalOriginalPrice = 0;
+            let totalQuantity = 0;
+
+            itemsList.innerHTML = '';
+
+            cartItems.forEach(item => {
+                const productDetails = window.productDatabase ? productDatabase[item.id] : null;
+                if (!productDetails) return; 
+
+                const currentPrice = parseFloat(productDetails.priceDisplay.replace(/[^\d.]/g, ''));
+                const originalPrice = parsePrice(productDetails.oldPrice);
+                
+                subTotal += currentPrice * item.quantity;
+                totalOriginalPrice += originalPrice * item.quantity;
+                totalQuantity += item.quantity;
+
+                itemsList.innerHTML += `
+                    <div class="summary-item">
+                        <img src="${productDetails.image}" alt="${productDetails.title}" style="width: 50px; height: 50px; object-fit: contain;">
+                        <p>${productDetails.title} <span>x ${item.quantity}</span></p>
+                        <p style="font-weight: 600;">₹ ${(currentPrice * item.quantity).toLocaleString('en-IN')}</p>
+                    </div>
+                `;
+            });
+
+            const deliveryCharge = subTotal >= DELIVERY_THRESHOLD ? 0 : DELIVERY_CHARGE;
+            finalOrderTotal = subTotal + deliveryCharge;
+            const savings = Math.max(0, totalOriginalPrice - subTotal);
+
+            document.getElementById('summary-total-qty').textContent = totalQuantity;
+            document.getElementById('summary-total-price').textContent = `₹ ${subTotal.toLocaleString('en-IN')}`;
+            document.getElementById('summary-discount').textContent = `- ₹ ${savings.toLocaleString('en-IN')}`;
+            
+            const deliverySpan = document.getElementById('summary-delivery');
+            if (deliveryCharge === 0) {
+                deliverySpan.textContent = 'FREE';
+                deliverySpan.style.color = 'green';
+            } else {
+                deliverySpan.textContent = `₹ ${deliveryCharge}`;
+                deliverySpan.style.color = '';
+            }
+            
+            document.getElementById('summary-final-total').textContent = `₹ ${finalOrderTotal.toLocaleString('en-IN')}`;
+            
+            const finalTotalDisplay = document.getElementById('final-total-display');
+            if (finalTotalDisplay) {
+                finalTotalDisplay.textContent = finalOrderTotal.toLocaleString('en-IN');
+            }
+            
+            updateQrCode();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCheckoutSummary(); 
+            
+            const shippingForm = document.getElementById('shipping-form');
+            const placeOrderBtn = document.getElementById('place-order-btn');
+            const addressSection = document.getElementById('address-section');
+            const paymentSection = document.getElementById('payment-section');
+            const paymentOptions = document.querySelectorAll('input[name="payment-method"]');
+            const qrDisplayArea = document.getElementById('qr-display-area');
+
+            // --- 2. Address Submission Logic ---
+            if (shippingForm) {
+                shippingForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    addressSection.style.display = 'none';
+                    paymentSection.style.display = 'block'; 
+
+                    showToast("✅ Address Saved! Now select Payment Method."); 
+                    placeOrderBtn.disabled = false; 
+                    placeOrderBtn.style.opacity = 1;
+                });
+            }
+
+            // --- 3. Payment Method Change Logic ---
+            paymentOptions.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value === 'qr') {
+                        qrDisplayArea.style.display = 'block';
+                        updateQrCode(); 
+                    } else {
+                        qrDisplayArea.style.display = 'none';
+                    }
+                });
+            });
+
+            // --- 4. Place Order Logic ---
+            if (placeOrderBtn) {
+                placeOrderBtn.addEventListener('click', function() {
+                    showToast(`🎉 Order Placed Successfully! Total: ₹ ${finalOrderTotal.toLocaleString('en-IN')}`);
+                    
+                    // FIX: Clear both cart keys to ensure a clean slate
+                    localStorage.removeItem('cartItems'); 
+                    localStorage.removeItem('buyNowItem'); 
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html'; 
+                    }, 1000); 
+                });
+            }
+        });
+    </script>
+    <script src="security.js"></script>
+</body>
+</html>

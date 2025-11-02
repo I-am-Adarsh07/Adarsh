@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Items | All In One Store</title> 
+    <link rel="stylesheet" href="styles.css">
+    <script src="product.js"></script> 
+</head>
+<body>
+    <header class="main-header">
+    </header>
+
+    <main class="container">
+        <h1 id="categoryHeader">Fashion Items</h1> 
+        <p id="noResults" style="display:none; text-align:center; font-size:1.2em; color:#888;">Sorry, no fashion products found.</p>
+
+        <div id="categoryProductGrid" class="product-grid">
+        </div>
+    </main>
+    
+    <footer class="main-footer">
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // 1. Verify that productDatabase is loaded
+        if (typeof productDatabase === 'undefined') {
+            // Display an error message if product.js failed to load
+            console.error("Error: productDatabase is not defined. Check if product.js is loaded correctly.");
+            document.getElementById('categoryHeader').textContent = "ERROR: Product Data Not Found";
+            document.getElementById('noResults').textContent = "Error loading products. Check file name (product.js).";
+            document.getElementById('noResults').style.display = 'block';
+            return; 
+        }
+        
+        // Define the target category
+        const fixedCategoryName = 'fashion'; 
+        const productGrid = document.getElementById('categoryProductGrid');
+        
+        // Get all products from the database
+        const allProducts = Object.values(productDatabase); 
+
+        // 2. Filtering Logic: Only include items with the 'fashion' category
+        const filteredProducts = allProducts.filter(product => 
+            product.category && product.category.toLowerCase() === fixedCategoryName.toLowerCase()
+        );
+
+        // 3. Display the filtered products
+        if (filteredProducts.length === 0) {
+            document.getElementById('noResults').style.display = 'block';
+        } else {
+            productGrid.innerHTML = ''; // Clear the grid
+            filteredProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                // HTML structure for the product card
+                card.innerHTML = `
+                    <a href="product.html?id=${product.id}">
+                        <img src="${product.image}" alt="${product.title}">
+                        <div class="card-info">
+                            <h3>${product.title}</h3>
+                            <p class="price-display">
+                                <span class="new-price">${product.priceDisplay}</span>
+                                <span class="old-price">${product.oldPrice || ''}</span>
+                            </p>
+                        </div>
+                    </a>
+                `;
+                productGrid.appendChild(card);
+            });
+        }
+    });
+    </script>
+    <script src="security.js"></script>
+</body>
+</html>

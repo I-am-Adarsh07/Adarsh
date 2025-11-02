@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronics Items | All In One Store</title> 
+    <link rel="stylesheet" href="styles.css">
+    <script src="product.js"></script> 
+</head>
+<body>
+    <header class="main-header">
+    </header>
+
+    <main class="container">
+        <h1 id="categoryHeader">Electronics Items</h1> 
+        <p id="noResults" style="display:none; text-align:center; font-size:1.2em; color:#888;">Sorry, no electronics products found.</p>
+
+        <div id="categoryProductGrid" class="product-grid">
+        </div>
+    </main>
+    
+    <footer class="main-footer">
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 🎯 1. Define the fixed category name for this page:
+        const fixedCategoryName = 'electronics'; 
+        
+        const productGrid = document.getElementById('categoryProductGrid');
+        
+        // 🚨 Ensure productDatabase is available (products.js must be loaded)
+        // If productDatabase is not defined, this script will throw an error or the app won't function.
+        if (typeof productDatabase === 'undefined') {
+            console.error("Error: productDatabase not found. Check if product.js is loaded correctly.");
+            return;
+        }
+
+        const allProducts = Object.values(productDatabase); 
+
+        // 2. Filter the products: only include items with the 'electronics' category
+        const filteredProducts = allProducts.filter(product => 
+            product.category && product.category.toLowerCase() === fixedCategoryName.toLowerCase()
+        );
+
+        // 3. Display the filtered products
+        if (filteredProducts.length === 0) {
+            document.getElementById('noResults').style.display = 'block';
+        } else {
+            productGrid.innerHTML = ''; // Clear previous content
+            filteredProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card'; // Use the standard product card class
+                
+                // Construct the HTML structure for the product card
+                card.innerHTML = `
+                    <a href="product.html?id=${product.id}">
+                        <img src="${product.image}" alt="${product.title}">
+                        <div class="card-info">
+                            <h3>${product.title}</h3>
+                            <p class="price-display">
+                                <span class="new-price">${product.priceDisplay}</span>
+                                <span class="old-price">${product.oldPrice || ''}</span>
+                            </p>
+                        </div>
+                    </a>
+                `;
+                productGrid.appendChild(card);
+            });
+        }
+    });
+    </script>
+    <script src="security.js"></script>
+</body>
+</html>

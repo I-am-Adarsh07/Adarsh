@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="container success-main">
+        <div class="success-box">
+            <h1>Payment Successful! 🎉</h1>
+            <p class="success-message">Thanks for the order! Your payment was processed successfully.</p>
+            
+            <div class="order-details">
+                <h2>Order Summary</h2>
+                <p><strong>Payment Status:</strong> Paid</p>
+                <p><strong>Total Paid:</strong> <span id="paid-amount">Loading...</span></p>
+                <p><strong>Order ID:</strong> #AIOS-2025<span id="random-id"></span></p>
+            </div>
+
+            <p class="next-steps">A confirmation email has been sent. Your items will be shipped shortly.</p>
+
+            <a href="index.html" class="back-to-home-btn">Continue Shopping</a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Retrieve total from previous step
+            const total = sessionStorage.getItem('lastOrderTotal');
+            const paidAmount = document.getElementById('paid-amount');
+            const randomId = document.getElementById('random-id');
+
+            if (total) {
+                paidAmount.textContent = `₹ ${total}`;
+            } else {
+                paidAmount.textContent = '₹ N/A (Check email)';
+            }
+            
+            // Cleanup: Clear cart and total
+            localStorage.removeItem('cart');
+            sessionStorage.removeItem('lastOrderTotal');
+            
+            // Set fake random order ID
+            randomId.textContent = Math.floor(10000 + Math.random() * 90000);
+        });
+    </script>
+    <script src="security.js"></script>
+</body>
+</html>
