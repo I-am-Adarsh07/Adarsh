@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All In One Store | Home</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* General Layout */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .main-header { background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-content { 
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 0; 
+        }
+        .logo a { font-size: 1.8em; font-weight: 700; color: #ff9900; text-decoration: none; }
+        .search-bar { display: flex; flex-grow: 1; max-width: 500px; margin: 0 30px; }
+        .search-bar input { padding: 10px; border: 2px solid #ff9900; border-right: none; border-radius: 6px 0 0 6px; width: 100%; font-size: 1em; }
+        .search-bar button { padding: 10px 15px; background-color: #ff9900; border: none; border-radius: 0 6px 6px 0; color: white; cursor: pointer; }
+        
+        .header-nav { display: flex; align-items: center; gap: 20px; }
+        .header-nav a { 
+            text-decoration: none; 
+            color: #333; 
+            font-weight: 500; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            transition: color 0.2s;
+        }
+        .header-nav a:hover { color: #ff9900; }
+        .cart-icon { color: #333; font-weight: 600; }
+
+        /* Product Grid Styles (Kept for completeness) */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 40px 0; }
+        .product-card { 
+            background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;
+            display: flex; flex-direction: column; text-align: center; 
+            text-decoration: none; color: inherit; cursor: pointer;
+        }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+        .product-image-container { height: 250px; overflow: hidden; position: relative; }
+        .product-image-container img { width: 100%; height: 100%; object-fit: contain; padding: 10px; background-color: #f7f7f7; }
+        .discount-badge { position: absolute; top: 10px; right: 10px; background-color: #ffc107; color: #333; padding: 3px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8em; }
+        .product-details { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-details h3 { font-size: 1.2em; margin-bottom: 5px; color: #333; }
+        .product-card:hover .product-details h3 { color: #ff9900; }
+        .product-price { margin: 10px 0; }
+        .new-price { font-size: 1.4em; color: #28a745; font-weight: 700; display: block; }
+        .old-price { text-decoration: line-through; color: #999; font-size: 0.9em; margin-left: 10px; }
+        .product-rating { color: #ffc107; font-size: 1em; margin-bottom: 10px; }
+        .rating-value { color: #555; margin-left: 5px; font-size: 0.9em; }
+
+        /* Custom Toast Notification Styles */
+        #customToast {
+            visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            z-index: 1000; min-width: 250px; background-color: #333; color: #fff; text-align: center;
+            border-radius: 8px; padding: 16px; font-size: 17px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: opacity 0.5s, visibility 0.5s; opacity: 0;
+        }
+        #customToast.show { visibility: visible; opacity: 1; }
+
+        /* Additional basic category/footer styles for layout visibility */
+        .top-categories { display: flex; justify-content: space-around; padding: 20px 0; border-bottom: 1px solid #eee; }
+        .category-item { background: #f0f0f0; padding: 10px 20px; border-radius: 6px; text-decoration: none; color: #333; }
+        .main-footer { text-align: center; padding: 20px; background-color: #333; color: white; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content container">
+            <div class="logo">
+                <a href="index.html">All In One Store</a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <button>🔍</button>
+            </div>
+            <nav class="header-nav">
+                <a href="account.html">👨 **Account**</a> 
+                <a href="#">❤️ **Wishlist**</a>
+                <a href="cart.html" class="cart-icon">🛒 **Cart** (0)</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="hero-slider">
+            <img src="https://via.placeholder.com/1200x300?text=Big+Savings+Banner" alt="Big Deals" class="full-width-banner">
+        </div>
+
+        <section class="top-categories">
+            <a href="electronic.html" class="category-item">Electronics</a>
+            <a href="fashion.html" class="category-item">Fashion</a>
+            <a href="books.html" class="category-item">Books</a>
+            <a href="home.html" class="category-item">Home Goods</a>
+        </section>
+        
+        <h2>🔥 Today's Big Deals 🔥</h2>
+        <div class="product-grid" id="featured-products">
+            </div>
+
+        <h2 class="section-title">✨ Electronics Top Deals</h2>
+        <div class="product-grid" id="electronic-products">
+            </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 All In One Store. All rights reserved.</p>
+    </footer>
+    
+    <div id="customToast"></div> 
+    
+    <script>
+        // --- 1. PRODUCT DATABASE ---
+        const productDatabase = {
+            '1': { 
+                title: 'Smartwatch Model X', price: 9999, oldPrice: '₹ 19,999', 
+                image: 'https://www.titan.co.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dwf5666e88/images/Fastrack/Catalog/38148QM01_1.jpg?sw=360&sh=360', 
+                category: 'Electronics', discount: '-50% OFF', rating: 4.3,
+                images: [
+                    'https://www.titan.co.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dwf5666e88/images/Fastrack/Catalog/38148QM01_1.jpg?sw=360&sh=360',
+                    'https://www.titan.co.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dw20a2e582/images/Fastrack/Catalog/38148QM01_2.jpg?sw=360&sh=360',
+                    'https://www.titan.co.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dw7694939b/images/Fastrack/Catalog/38148QM01_3.jpg?sw=360&sh=360',
+                    'https://www.titan.co.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dw10d0f50b/images/Fastrack/Catalog/38148QM01_4.jpg?sw=360&sh=360'
+                ],
+                description: "Experience the next level of smart technology with the Smartwatch Model X."
+            },
+            '2': { 
+                title: "Man's T-shirt", price: 399, oldPrice: '₹ 1,299', 
+                image: 'https://img.freepik.com/premium-photo/black-plain-shortsleeve-cotton-t-shirt-template-isolated-white-background_41929-3076.jpg', 
+                category: 'Fashion', discount: '-70% OFF', rating: 4.8,
+                images: new Array(4).fill('https://img.freepik.com/premium-photo/black-plain-shortsleeve-cotton-t-shirt-template-isolated-white-background_41929-3076.jpg'), 
+                description: "A comfortable and stylish black cotton T-shirt, perfect for everyday wear."
+            },
+            '3': { 
+                title: 'Premium Headphones', price: 1499, oldPrice: '₹ 2,499', 
+                image: 'https://www.leafstudios.in/cdn/shop/files/1_a43c5e0b-3a47-497d-acec-b4764259b10e_1024x1024.png?v=1750486829', 
+                category: 'Electronics', discount: '-40% OFF', rating: 4.1,
+                images: new Array(4).fill('https://www.leafstudios.in/cdn/shop/files/1_a43c5e0b-3a47-497d-acec-b4764259b10e_1024x1024.png?v=1750486829'),
+                description: "Immerse yourself in high-quality audio with these premium noise-canceling headphones."
+            },
+            '4': { 
+                title: 'PowerBank', price: 1250, oldPrice: '₹ 1,800', 
+                image: 'https://zebronics.com/cdn/shop/files/Zeb-MB10000S9-Pro-pic1.jpg?v=1755673820&width=800', 
+                category: 'Electronics', discount: '-30% OFF', rating: 4.7,
+                images: new Array(4).fill('https://zebronics.com/cdn/shop/files/Zeb-MB10000S9-Pro-pic1.jpg?v=1755673820&width=800'),
+                description: "High capacity power bank to keep your devices charged all day long."
+            },
+            '5': { 
+                title: 'HP Victus Laptop', price: 49999, oldPrice: '₹ 62,500', 
+                image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Computers%20Peripherals/Laptop/Images/309065_0_xb9gpu.png?tr=w-640', 
+                category: 'Electronics', discount: '-20% OFF', rating: 4.6,
+                images: new Array(4).fill('https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Computers%20Peripherals/Laptop/Images/309065_0_xb9gpu.png?tr=w-640'),
+                description: "Powerful gaming laptop with latest processor and high-resolution display."
+            },
+            '6': { 
+                title: 'Python Programming', price: 800, oldPrice: '₹ 1100', 
+                image: 'https://in.bpbonline.com/cdn/shop/files/2289_Epub.jpg?v=1755671457&width=500', 
+                category: 'Books', discount: '-20% OFF', rating: 4.6,
+                images: new Array(4).fill('https://in.bpbonline.com/cdn/shop/files/2289_Epub.jpg?v=1755671457&width=500'),
+                description: "The definitive guide to learning Python programming, from beginner to advanced concepts."
+            },
+            '7': { 
+                title: 'DSLR Camera', price: 34999, oldPrice: '₹ 41,175', 
+                image: 'https://m.media-amazon.com/images/I/71iKNJ6rVIL._SX522_.jpg', 
+                category: 'Electronics', discount: '-15% OFF', rating: 4.2,
+                images: new Array(4).fill('https://m.media-amazon.com/images/I/71iKNJ6rVIL._SX522_.jpg'),
+                description: "Capture professional-quality photos and videos with this high-end DSLR camera."
+            },
+            '8': { 
+                title: 'Speaker', price: 1799, oldPrice: '₹ 2,500', 
+                image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Entertainment/Speakers%20and%20Media%20Players/Images/251614_0_ghxuff.png?tr=w-640', 
+                category: 'Electronics', discount: 'New', rating: 4.5,
+                images: new Array(4).fill('https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Entertainment/Speakers%20and%20Media%20Players/Images/251614_0_ghxuff.png?tr=w-640'),
+                description: "Portable Bluetooth speaker with powerful sound and long battery life."
+            },
+            '9': { 
+                title: 'Wireless Earbuds', price: 2999, oldPrice: '₹ 3,999', 
+                image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Entertainment/Wireless%20Earbuds/Images/272743_wpivml.png?tr=w-640', 
+                category: 'Electronics', discount: '-25% OFF', rating: 4.9,
+                images: new Array(4).fill('https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Entertainment/Wireless%20Earbuds/Images/272743_wpivml.png?tr=w-640'),
+                description: "True wireless earbuds with superior sound quality and comfortable fit."
+            }
+        };
+
+        // --- 2. CORE FUNCTIONS ---
+        
+        // NOTE: showToast function is defined globally in security.js now.
+        // It is kept here temporarily for local testing, but should ideally be removed 
+        // to rely only on the one in security.js to avoid errors. 
+        function showToast(message) {
+            const toast = document.getElementById("customToast");
+            if (!toast) return;
+            toast.textContent = message;
+            toast.className = "show"; 
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function updateHeaderCartCount() {
+            const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            const cartIcon = document.querySelector('.cart-icon');
+            if(cartIcon) {
+                cartIcon.innerHTML = `🛒 **Cart** (${totalItems})`;
+            }
+        }
+        
+        function addToCart(productId) { 
+             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+             const existingItemIndex = cart.findIndex(item => item.id === productId);
+
+             if (existingItemIndex > -1) {
+                 cart[existingItemIndex].quantity += 1;
+             } else {
+                 cart.push({ id: productId, quantity: 1 });
+             }
+
+             localStorage.setItem('cart', JSON.stringify(cart));
+             updateHeaderCartCount();
+             showToast("✅ Added to Cart!");
+        }
+
+        function getStars(rating) {
+            const roundedRating = Math.round(rating * 2) / 2;
+            const fullStars = '★'.repeat(Math.floor(roundedRating));
+            const halfStar = (roundedRating % 1 !== 0) ? '½' : '';
+            const emptyStars = '☆'.repeat(5 - Math.ceil(roundedRating));
+            return fullStars + halfStar + emptyStars;
+        }
+
+        // --- 3. DYNAMIC RENDERING LOGIC ---
+
+        function createProductCardHTML(id, product) {
+            const starsHTML = getStars(product.rating || 4.0);
+            
+            // Note: The product card is now a div containing the Buy/Add buttons, 
+            // and the image/details link to the product.html page.
+            return `
+                <div class="product-card" data-product-id="${id}">
+                    <a href="product.html?id=${id}" style="text-decoration: none; color: inherit;">
+                        <div class="product-image-container">
+                            <img src="${product.image}" alt="${product.title}">
+                            <span class="discount-badge">${product.discount || 'Sale'}</span>
+                        </div>
+                        <div class="product-details">
+                            <h3 class="product-title">${product.title}</h3>
+                            <div class="product-price">
+                                <span class="new-price">₹ ${product.price.toLocaleString('en-IN')}</span>
+                                <span class="old-price">${product.oldPrice}</span>
+                            </div>
+                            <div class="product-rating">
+                                <span class="stars">${starsHTML}</span> 
+                                <span class="rating-value">${product.rating ? product.rating.toFixed(1) : 'N/A'}</span>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="product-actions" style="padding: 10px; display: flex; gap: 10px;">
+                        <button class="buy-now-btn" 
+                                onclick="window.location.href='checkout.html?product_id=${id}&quantity=1';" 
+                                style="flex: 1; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                                Buy Now
+                        </button>
+                        <button class="add-to-cart-btn" 
+                                onclick="addToCart('${id}');"
+                                style="flex: 1; padding: 10px; background-color: #ff9900; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                                Add To Cart
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderProducts(containerId, filterCategory = null, limit = 0) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            let productCount = 0;
+            container.innerHTML = '';
+            let productKeys = Object.keys(productDatabase);
+            
+            for (const id of productKeys) {
+                const product = productDatabase[id];
+                
+                if (filterCategory && product.category !== filterCategory) {
+                    continue;
+                }
+                if (limit > 0 && productCount >= limit) {
+                    break;
+                }
+
+                container.innerHTML += createProductCardHTML(id, product);
+                productCount++;
+            }
+        }
+
+        // --- 4. INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts('featured-products', null, 6); 
+            renderProducts('electronic-products', 'Electronics');
+            updateHeaderCartCount();
+        });
+    </script>
+    
+    <script src="security.js"></script>
+</body>
+</html>
