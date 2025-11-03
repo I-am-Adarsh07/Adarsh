@@ -7,13 +7,50 @@
     <link rel="stylesheet" href="styles.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <script src="product.js"></script> 
-    <script src="js/interactivity.js"></script> 
+    <style>
+        /* [NOTE]: For a complete solution, please ensure these styles are in your styles.css */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .main-header { background-color: white; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
+        .checkout-main { padding-top: 40px; }
+        .checkout-layout { display: flex; gap: 40px; margin-top: 20px; flex-wrap: wrap; }
+        .checkout-form-section { flex: 2; min-width: 350px; }
+        .checkout-summary { flex: 1; min-width: 300px; background-color: #f7f7f7; padding: 25px; border-radius: 10px; height: fit-content; }
+        
+        .checkout-form input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .save-address-btn, .checkout-btn { width: 100%; padding: 15px; background-color: #0048E3; color: white; border: none; border-radius: 6px; font-size: 1.1em; cursor: pointer; margin-top: 10px; transition: background-color 0.3s; }
+        .save-address-btn:hover, .checkout-btn:hover:enabled { background-color: #0036a8; }
+
+        /* Payment Options */
+        .payment-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .payment-option-card { display: flex; align-items: flex-start; gap: 15px; border: 1px solid #ddd; padding: 15px; border-radius: 8px; cursor: pointer; transition: border-color 0.2s; background-color: white; }
+        .payment-option-card:hover { border-color: #0048E3; }
+        .payment-option-card input[type="radio"] { margin-top: 4px; }
+        .payment-option-card span { font-weight: 600; color: #1c1c1c; }
+        .payment-option-card p { font-size: 0.9em; color: #555; margin-top: 2px; }
+
+        /* Summary Details */
+        .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #ddd; }
+        .summary-item img { margin-right: 15px; }
+        .summary-item p { flex-grow: 1; font-size: 0.95em; }
+        .summary-details p { display: flex; justify-content: space-between; padding: 8px 0; font-size: 1em; }
+        .summary-total { border-top: 2px solid #ddd; padding-top: 15px; margin-top: 15px; font-size: 1.2em; font-weight: 700; color: #fb641b; }
+        .main-footer { text-align: center; padding: 20px; background-color: #1c1c1c; color: white; margin-top: 40px; }
+    </style>
 </head>
 <body>
-    
     <header class="main-header">
-        </header>
+        <div class="header-content container">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center;">
+                    <span style="font-size: 1.8em; font-weight: 700; color: #0048E3;">All In One Store</span>
+                </a>
+            </div>
+            <nav class="header-nav">
+                <a href="cart.html">🛒 **Return to Cart**</a> 
+            </nav>
+        </div>
+    </header>
 
     <main class="container checkout-main">
         <h1>💳 Secure Checkout</h1>
@@ -45,7 +82,7 @@
 
                         <div id="qr-display-area" style="display: none; text-align: center; padding: 15px; background-color: #f7f7f7; border-radius: 8px; margin-top: 10px;">
                             <h3>Scan to Pay</h3>
-                            <img id="qr-code-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Scan UPI QR Code" style="width: 150px; height: 150px; border: 1px solid #ddd; margin: 10px 0;">
+                            <img id="" src="AQ.jpg" alt="Scan UPI QR Code" style="width: 150px; height: 150px; border: 1px solid #ddd; margin: 10px 0;">
                             <p style="font-size: 0.9em; color: #555;">Or use UPI ID: <strong id="upi-display-id"></strong></p>
                             <p style="color: #FF5722; font-weight: 600;">Amount: ₹ <span id="qr-amount-display">0</span></p>
                         </div>
@@ -69,7 +106,7 @@
                 <h2 class="summary-heading">📦 Order Summary (<span id="summary-total-qty">0</span> Items)</h2>
                 
                 <div id="checkout-items-list">
-                    </div>
+                </div>
 
                 <div class="summary-details">
                     <p>Subtotal: <span id="summary-total-price">₹ 0</span></p>
@@ -86,10 +123,37 @@
     </main>
 
     <footer class="main-footer">
-        </footer>
+        <p>&copy; 2025 All In One Store. All rights reserved.</p>
+    </footer>
     
     <div id="customToast"></div> 
 
+    <script>
+        window.productDatabase = {
+            '1': { 
+                title: 'Smartwatch Model X', price: 9999, oldPrice: '₹ 19,999', image: 'https://www.titan.co.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dwf5666e88/images/Fastrack/Catalog/38148QM01_1.jpg?sw=360&sh=360', 
+                priceDisplay: '₹ 9,999', oldPrice: '₹ 19,999' 
+            },
+            '2': { 
+                title: "Man's T-shirt", price: 399, oldPrice: '₹ 1,299', image: 'https://img.freepik.com/premium-photo/black-plain-shortsleeve-cotton-t-shirt-template-isolated-white-background_41929-3076.jpg', 
+                priceDisplay: '₹ 399', oldPrice: '₹ 1,299' 
+            },
+            '3': { 
+                title: 'Premium Headphones', price: 1499, oldPrice: '₹ 2,499', image: 'https://www.leafstudios.in/cdn/shop/files/1_a43c5e0b-3a47-497d-acec-b4764259b10e_1024x1024.png?v=1750486829', 
+                priceDisplay: '₹ 1,499', oldPrice: '₹ 2,499' 
+            },
+            '4': { 
+                title: 'PowerBank', price: 1250, oldPrice: '₹ 1,800', image: 'https://zebronics.com/cdn/shop/files/Zeb-MB10000S9-Pro-pic1.jpg?v=1755673820&width=800', 
+                priceDisplay: '₹ 1,250', oldPrice: '₹ 1,800' 
+            },
+            '5': { 
+                title: 'HP Victus Laptop', price: 49999, oldPrice: '₹ 62,500', image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Computers%20Peripherals/Laptop/Images/309065_0_xb9gpu.png?tr=w-640', 
+                priceDisplay: '₹ 49,999', oldPrice: '₹ 62,500' 
+            }
+            // अन्य उत्पाद यहाँ जोड़ें...
+        };
+    </script>
+    
     <script>
         // ====================================
         // CONFIGURATION
@@ -103,7 +167,8 @@
         // Helper function to parse price string 
         function parsePrice(priceStr) {
             if (!priceStr) return 0;
-            const cleanedStr = priceStr.replace(/[^0-9.]/g, '');
+            // .replace(/[^\d.]/g, '') की जगह केवल numbers को रखें
+            const cleanedStr = priceStr.replace(/[^0-9]/g, ''); 
             return parseInt(cleanedStr) || 0;
         }
 
@@ -124,6 +189,7 @@
             const encodedAmount = finalOrderTotal.toFixed(2);
             
             const upiUrl = `upi://pay?pa=${UPI_ID}&pn=${MERCHANT_NAME}&am=${encodedAmount}&cu=INR`;
+            // Google Charts API का उपयोग करके QR कोड उत्पन्न करना
             const qrCodeUrl = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(upiUrl)}`;
 
             if (qrCodeImg) {
@@ -136,16 +202,22 @@
         // Main function to Render the Order Summary
         // ----------------------------------------------------
         function renderCheckoutSummary() {
-            // FIX: Prioritize 'buyNowItem' first, otherwise default to 'cartItems'
-            let cartItems = JSON.parse(localStorage.getItem('buyNowItem')); 
+            // 💥 FIX 2: Local Storage keys को ठीक किया गया
+            let buyNowItem = JSON.parse(localStorage.getItem('buyNowItem')); 
+            let cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
             
-            if (!cartItems || cartItems.length === 0) {
-                 cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            // Priority: 1. Buy Now Item (product.html से) 2. Cart Items (cart.html से)
+            let itemsToDisplay = [];
+            if (buyNowItem && buyNowItem.length > 0) {
+                 itemsToDisplay = buyNowItem;
+            } else if (cartItems.length > 0) {
+                 itemsToDisplay = cartItems;
             }
-            
+
             const itemsList = document.getElementById('checkout-items-list');
             
-            if (cartItems.length === 0) {
+            if (itemsToDisplay.length === 0) {
+                // यह सुनिश्चित करता है कि यदि कार्ट खाली है तो रीडायरेक्ट हो
                 showToast("Your cart is empty. Redirecting to home.");
                 setTimeout(() => {
                     window.location.href = 'index.html'; 
@@ -159,11 +231,13 @@
 
             itemsList.innerHTML = '';
 
-            cartItems.forEach(item => {
-                const productDetails = window.productDatabase ? productDatabase[item.id] : null;
+            itemsToDisplay.forEach(item => {
+                // productDatabase अब window.productDatabase से आता है
+                const productDetails = window.productDatabase ? window.productDatabase[item.id] : null; 
                 if (!productDetails) return; 
-
-                const currentPrice = parseFloat(productDetails.priceDisplay.replace(/[^\d.]/g, ''));
+                
+                // priceDisplay से price निकालना
+                const currentPrice = productDetails.price; 
                 const originalPrice = parsePrice(productDetails.oldPrice);
                 
                 subTotal += currentPrice * item.quantity;
@@ -221,6 +295,8 @@
                 shippingForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
+                    // एड्रेस को संक्षिप्त दिखाने का लॉजिक यहाँ जोड़ा जा सकता है
+
                     addressSection.style.display = 'none';
                     paymentSection.style.display = 'block'; 
 
@@ -247,8 +323,8 @@
                 placeOrderBtn.addEventListener('click', function() {
                     showToast(`🎉 Order Placed Successfully! Total: ₹ ${finalOrderTotal.toLocaleString('en-IN')}`);
                     
-                    // FIX: Clear both cart keys to ensure a clean slate
-                    localStorage.removeItem('cartItems'); 
+                    // 💥 FIX 3: दोनों लोकल स्टोरेज keys को साफ़ करें 
+                    localStorage.removeItem('cart'); 
                     localStorage.removeItem('buyNowItem'); 
                     
                     setTimeout(() => {
