@@ -222,3 +222,64 @@ h2 {
         opacity: 1;
     }
 }
+/* ====================================
+   LOGO ANIMATION & PLACEMENT FIXES
+   ==================================== */
+
+/* Main Header Layout */
+.main-header {
+    background-color: white; 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); 
+    position: sticky; 
+    top: 0; 
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px; /* Padding for header content */
+}
+
+/* Logo container styling (The anchor tag) */
+.logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    /* लोगो कंटेनर को साइड में रखने के लिए कोई विशेष फ्लोटिंग की आवश्यकता नहीं है 
+       क्योंकि flexbox (header-content) इसे संभालता है। */
+}
+
+/* Logo Image Styling */
+.brand-logo-img {
+    height: 40px; /* डिफ़ॉल्ट आकार */
+    width: 40px; 
+    margin-right: 10px;
+    border-radius: 50%; /* लोगो को गोल आकार देने के लिए */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* हल्का शैडो */
+    
+    /* 💥 मुख्य एनिमेशन ट्रांज़िशन: स्मूथ इफ़ेक्ट के लिए */
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; 
+    /* 0.3 सेकंड में आकार और शैडो दोनों बदलेंगे */
+}
+
+/* 💥 HOVER EFFECT: आकार बढ़ाएँ और शैडो गहरा करें */
+.logo a:hover .brand-logo-img {
+    transform: scale(1.1); /* 1.1 गुना (10% बड़ा) करें */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* गहरा शैडो */
+    /* जब माउस जाएगा, तो 0.3 सेकंड में यह प्रभाव दिखेगा */
+}
+
+/* Logo Text Styling */
+.logo span {
+    font-size: 1.8em; 
+    font-weight: 700; 
+    color: #0048E3;
+    transition: color 0.3s;
+}
+
+.logo a:hover span {
+    color: #ffc700; /* टेक्स्ट का रंग भी बदल सकते हैं */
+}
