@@ -57,25 +57,25 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .search-bar input { 
-            /* ✅ बदलाव: इनपुट की पैडिंग कम करके साइज़ छोटा */
+            /* ✅ बदलाव: इनपुट की पैडिंग कम करके साइज़ छोटा */
             padding: 6px 10px; /* पैडिंग कम */
             border: none; 
             border-radius: 4px 0 0 4px; 
             width: 100%; 
-            font-size: 0.9em; /* फॉन्ट साइज़ छोटा */
+            font-size: 0.9em; /* फॉन्ट साइज़ छोटा */
             outline: none; 
             color: #333; 
             background-color: #f0f0f0; 
         }
         .search-bar button { 
-            /* ✅ बदलाव: बटन की पैडिंग कम करके साइज़ छोटा */
+            /* ✅ बदलाव: बटन की पैडिंग कम करके साइज़ छोटा */
             padding: 6px 12px; /* पैडिंग कम */
             background-color: #ff9900; 
             border: none; 
             border-radius: 0 4px 4px 0; 
             color: white; 
             cursor: pointer; 
-            font-size: 1em; /* फॉन्ट साइज़ छोटा */
+            font-size: 1em; /* फॉन्ट साइज़ छोटा */
             transition: background-color 0.2s;
         }
         .search-bar button:hover {
@@ -96,7 +96,7 @@
             align-items: center; 
             gap: 5px; 
             transition: color 0.2s;
-            font-size: 0.9em; /* फॉन्ट साइज़ छोटा */
+            font-size: 0.9em; /* फॉन्ट साइज़ छोटा */
             padding: 3px 5px; /* पैडिंग कम */
         }
         .header-nav a:hover { 
@@ -125,7 +125,7 @@
             text-decoration: none; 
             color: #333; 
             font-weight: 500; 
-            font-size: 0.85em; /* फॉन्ट साइज़ और छोटा */
+            font-size: 0.85em; /* फॉन्ट साइज़ और छोटा */
             transition: color 0.2s;
             position: relative;
         }
@@ -164,6 +164,90 @@
 
         /* Additional basic category/footer styles for layout visibility (No Change) */
         .main-footer { text-align: center; padding: 20px; background-color: #333; color: white; margin-top: 40px; }
+        
+        /* 💡 MOBILE RESPONSIVENESS ADDED BELOW (MEDIA QUERY) 💡 */
+        @media (max-width: 768px) {
+            
+            /* 1. Header Layout को स्टैक करें */
+            .header-content {
+                flex-direction: column; /* वर्टिकल स्टैक */
+                align-items: stretch; /* पूरी चौड़ाई लें */
+                padding: 5px 15px;
+            }
+            
+            /* 2. Search Bar को पूरी चौड़ाई दें और मार्जिन हटाएँ */
+            .search-bar {
+                max-width: 100%; /* पूरी चौड़ाई लें */
+                margin: 5px 0; 
+            }
+
+            /* 3. Navigation Links को छोटी स्क्रीन के लिए एडजस्ट करें */
+            .header-nav {
+                justify-content: space-around; /* लिंक के बीच समान जगह */
+                gap: 5px; 
+                margin-top: 5px;
+            }
+            .header-nav a {
+                font-size: 0.8em; 
+                padding: 3px;
+                white-space: nowrap; /* लिंक को एक लाइन में रखने की कोशिश */
+            }
+            .cart-icon {
+                font-size: 0.85em;
+            }
+
+            /* 4. Top Categories के लिए Horizontal Scrolling सक्षम करें */
+            .top-categories .container {
+                justify-content: flex-start !important; 
+                overflow-x: auto; /* क्षैतिज स्क्रॉल सक्षम */
+                white-space: nowrap; /* आइटम को एक ही लाइन में रखें */
+                padding: 0 15px; /* कंटेनर के लिए पैडिंग */
+            }
+            .top-categories {
+                 padding: 8px 0; /* कैटेगरी बार की पैडिंग */
+            }
+            .category-item {
+                flex-shrink: 0; /* आइटम को सिकुड़ने से रोकें */
+                font-size: 0.8em; 
+            }
+
+            /* 5. Product Grid (2 कॉलम) */
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* छोटे साइज़ के लिए 150px min-width */
+                gap: 10px; /* गैप कम करें */
+                padding: 20px 0;
+            }
+            
+            /* 6. Product Card/Image Size */
+            .product-image-container {
+                height: 150px; /* इमेज की ऊँचाई कम करें */
+            }
+            .product-details {
+                 padding: 10px;
+            }
+            .product-details h3 {
+                font-size: 1.0em; 
+            }
+            .new-price {
+                font-size: 1.2em; 
+            }
+            
+            /* 7. Product Actions (Buttons) */
+            .product-actions {
+                padding: 5px; 
+                gap: 5px !important;
+            }
+            .product-actions button {
+                padding: 8px 5px !important; /* बटन की पैडिंग कम करें */
+                font-size: 0.8em; /* बटन का फॉन्ट साइज़ छोटा करें */
+            }
+
+            /* 8. Hero Banner की ऊँचाई कम करें */
+            .hero-slider img {
+                height: 150px; /* बैनर की न्यूनतम ऊँचाई */
+                object-fit: cover;
+            }
+        }
     </style>
 </head>
 <body>
